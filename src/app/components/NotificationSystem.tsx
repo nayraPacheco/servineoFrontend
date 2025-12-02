@@ -105,7 +105,8 @@ interface INotification {
   action_url?: string; // URL para redirección
 }
 
-const API_URL = 'http://localhost:3000/api/notifications';
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000').replace(/\/$/, '');
+const API_URL = `${API_BASE}/api/notifications`;
 const NOTIFICATIONS_PER_PAGE = 20;
 const POLLING_INTERVAL = 5000; // 5 segundos para actualizaciones en tiempo real
 const SKELETON_DELAY = 300; // ms antes de mostrar skeleton
@@ -541,7 +542,7 @@ export default function NotificationSystem({ userId }: NotificationSystemProps) 
       const fechaCreacion = notification.creado || notification.createdAt;
       if ((tipoLower === 'oferta' || tipoLower === 'desconexion 2 dias') && fechaCreacion) {
         if (offersCountMap[notification._id] === undefined) {
-          fetch(`http://localhost:3000/api/offers/count-since?date=${encodeURIComponent(fechaCreacion)}`)
+          fetch(`${API_BASE}/api/offers/count-since?date=${encodeURIComponent(fechaCreacion)}`)
             .then((res) => res.json())
             .then((data) => {
               if (data.success && typeof data.count === 'number') {
@@ -566,7 +567,7 @@ export default function NotificationSystem({ userId }: NotificationSystemProps) 
       const fechaCreacion = notification.creado || notification.createdAt;
       if (tipoLower === 'desconexion 2 dias' && fechaCreacion) {
         if (promotionsCountMap[notification._id] === undefined) {
-          fetch(`http://localhost:3000/api/promotions/count-since?date=${encodeURIComponent(fechaCreacion)}`)
+          fetch(`${API_BASE}/api/promotions/count-since?date=${encodeURIComponent(fechaCreacion)}`)
             .then((res) => res.json())
             .then((data) => {
               if (data.success && typeof data.count === 'number') {
@@ -642,7 +643,7 @@ export default function NotificationSystem({ userId }: NotificationSystemProps) 
     if (notification.tipo && typeof notification.tipo === 'string') {
       const tipoLower = notification.tipo.trim().toLowerCase();
                 if (tipoLower === 'oferta' || tipoLower === 'desconexion 2 dias' || filter === 'ofertas_promociones') {
-        window.location.href = 'http://localhost:3001/job-offer-list';
+        window.location.href = '/job-offer-list';
         setIsOpen(false);
         return;
       }
